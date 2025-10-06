@@ -47,6 +47,20 @@ PORT = int(os.environ.get('PORT', 5000))
 HOST = os.environ.get('HOST', '0.0.0.0')
 TEMP_DOWNLOAD_FOLDER = os.environ.get('TEMP_FOLDER', tempfile.gettempdir())
 MAX_FILE_AGE = int(os.environ.get('MAX_FILE_AGE', 3600))  # 1 hora por defecto
+# Ruta al archivo de cookies
+COOKIES_FILE = Path('cookies.txt')
+cookies_env = os.environ.get('COOKIES_DATA')
+
+if cookies_env and not COOKIES_FILE.exists():
+    with open(COOKIES_FILE, 'w', encoding='utf-8') as f:
+        f.write(cookies_env)
+    logger.info("Archivo de cookies generado desde variable de entorno")
+
+USE_COOKIES=True
+
+logger.info(f"Usando cookies: {os.path.exists(COOKIES_FILE)}")
+
+
 
 # Configurar CORS
 CORS(app, resources={
@@ -163,6 +177,7 @@ def get_video_info():
             'quiet': True,
             'no_warnings': True,
             'socket_timeout': 30,
+            'cookiefile': COOKIES_FILE if os.path.exists(COOKIES_FILE) else None,
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -284,6 +299,7 @@ def download_worker(download_id, url, format_type, quality):
             'no_warnings': False,
             'ignoreerrors': False,
             'socket_timeout': 30,
+            'cookiefile': COOKIES_FILE if os.path.exists(COOKIES_FILE) else None,
         }
         
         # Configurar opciones según formato

@@ -57,3 +57,5 @@ yt_download_*
 .pytest_cache/
 .coverage
 htmlcov/
+
+cookies.txt
