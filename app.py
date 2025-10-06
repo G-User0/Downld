@@ -406,23 +406,25 @@ def internal_error(error):
 if __name__ == '__main__':
     # Crear directorio de descargas si no existe
     os.makedirs(TEMP_DOWNLOAD_FOLDER, exist_ok=True)
-    
+
     # Limpiar archivos antiguos al iniciar
     logger.info("Iniciando limpieza de archivos antiguos...")
     clean_old_files()
-    
-    # Iniciar servidor
+
+    # Forzar uso del puerto de Render si existe
+    port = int(os.environ.get('PORT', PORT))
+
     logger.info("=" * 60)
     logger.info("YouTube Downloader - Servidor Iniciado")
     logger.info("=" * 60)
     logger.info(f" Host: {HOST}")
-    logger.info(f" Puerto: {PORT}")
+    logger.info(f" Puerto: {port}")
     logger.info(f" Debug: {DEBUG_MODE}")
     logger.info(f" Carpeta temporal: {TEMP_DOWNLOAD_FOLDER}")
     logger.info(f" Tiempo máximo de archivos: {MAX_FILE_AGE}s")
     logger.info(f" FFmpeg: {'Disponible' if check_ffmpeg() else 'No disponible'}")
     logger.info("=" * 60)
-    logger.info(f" Abre tu navegador en: http://localhost:{PORT}")
+    logger.info(f" Abre tu navegador en: http://localhost:{port}")
     logger.info("=" * 60)
-    
-    app.run(debug=DEBUG_MODE, host=HOST, port=PORT)
+
+    app.run(debug=DEBUG_MODE, host=HOST, port=port)
