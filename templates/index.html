@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Downloader</title>
+    <title>YTDownld</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1f2937, #030712);
             min-height: 100vh;
             padding: 20px;
             display: flex;
@@ -29,6 +30,34 @@
             width: 100%;
             padding: 40px;
             animation: fadeIn 0.5s ease-in;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .left-column {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .right-column {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
         }
 
         @keyframes fadeIn {
@@ -56,7 +85,6 @@
             background: #f8fafc;
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
             border: 1px solid #e2e8f0;
         }
 
@@ -99,14 +127,16 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: linear-gradient(135deg, #334155, #111827);
             color: white;
+            display: flex;
+            align-items: center;
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: #5568d3;
+            background: linear-gradient(135deg, #334155, #111827);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(30, 32, 41, 0.46);
         }
 
         .btn-primary:disabled {
@@ -115,13 +145,15 @@
         }
 
         .btn-success {
-            background: #10b981;
+            background: linear-gradient(135deg, #334155, #111827);
             color: white;
             width: 100%;
         }
 
         .btn-success:hover:not(:disabled) {
-            background: #059669;
+            background: linear-gradient(135deg, #111827, #334155);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 32, 41, 0.46);
         }
 
         .video-info {
@@ -198,7 +230,9 @@
 
         .progress-container {
             display: none;
-            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
         }
 
         .progress-container.show {
@@ -215,7 +249,7 @@
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #64748b, #111827);
             width: 0%;
             transition: width 0.3s ease;
         }
@@ -229,7 +263,6 @@
         .status-message {
             padding: 12px;
             border-radius: 8px;
-            margin-top: 15px;
             display: none;
             animation: fadeIn 0.3s ease-in;
         }
@@ -302,82 +335,90 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🎥 YouTube Downloader</h1>
+        <!-- <div class="header">
+            <h1>YouTube Downloader</h1>
             <p>Descarga videos y audio en alta calidad</p>
-        </div>
+        </div> -->
+    
+        <div class="main-content">
+            <!-- Columna Izquierda -->
+            <div class="left-column">
+                <!-- URL Input -->
+                <div class="section">
+                    <div class="section-title">URL del Video</div>
+                    <div class="input-group">
+                        <input type="text" id="urlInput" placeholder="Pega aquí la URL de YouTube...">
+                        <button class="btn-primary" id="getInfoBtn">
+                            <span id="getInfoText">Obtener Info</span>
+                            <span id="getInfoLoader" class="loader" style="display: none;"></span>
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Download Options -->
+                <div class="section">
+                    <div class="section-title">Opciones de Descarga</div>
+                    <div class="options-grid">
+                        <div class="option-group">
+                            <label for="formatSelect">Formato</label>
+                            <select id="formatSelect">
+                                <option value="video">Video (MP4)</option>
+                                <option value="audio">Audio (MP3)</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label for="qualitySelect">Calidad</label>
+                            <select id="qualitySelect">
+                                <option value="Mejor calidad">Mejor calidad</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-success" id="downloadBtn" disabled>
+                        <span id="downloadText">Descargar</span>
+                        <span id="downloadLoader" class="loader" style="display: none;"></span>
+                    </button>
+                </div>
+    
+                <!-- Progress -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="section-title">Progreso</div>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
 
-        <!-- URL Input -->
-        <div class="section">
-            <div class="section-title">📎 URL del Video</div>
-            <div class="input-group">
-                <input type="text" id="urlInput" placeholder="Pega aquí la URL de YouTube...">
-                <button class="btn-primary" id="getInfoBtn">
-                    <span id="getInfoText">Obtener Info</span>
-                    <span id="getInfoLoader" class="loader" style="display: none;"></span>
-                </button>
+                <!-- Status Messages -->
+                <div class="status-message" id="statusMessage"></div>
             </div>
-        </div>
-
-        <!-- Video Info -->
-        <div class="section">
-            <div class="section-title">ℹ️ Información del Video</div>
-            <div class="video-info" id="videoInfo">
-                <img id="thumbnail" class="thumbnail" alt="Thumbnail">
-                <div class="video-info-item">
-                    <span class="video-info-label">Título:</span>
-                    <span class="video-info-value" id="videoTitle">-</span>
-                </div>
-                <div class="video-info-item">
-                    <span class="video-info-label">Canal:</span>
-                    <span class="video-info-value" id="videoUploader">-</span>
-                </div>
-                <div class="video-info-item">
-                    <span class="video-info-label">Duración:</span>
-                    <span class="video-info-value" id="videoDuration">-</span>
-                </div>
-                <div class="video-info-item">
-                    <span class="video-info-label">Vistas:</span>
-                    <span class="video-info-value" id="videoViews">-</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Download Options -->
-        <div class="section">
-            <div class="section-title">⚙️ Opciones de Descarga</div>
-            <div class="options-grid">
-                <div class="option-group">
-                    <label for="formatSelect">Formato</label>
-                    <select id="formatSelect">
-                        <option value="video">Video (MP4)</option>
-                        <option value="audio">Audio (MP3)</option>
-                    </select>
-                </div>
-                <div class="option-group">
-                    <label for="qualitySelect">Calidad</label>
-                    <select id="qualitySelect">
-                        <option value="Mejor calidad">Mejor calidad</option>
-                    </select>
+    
+            <!-- Columna Derecha -->
+            <div class="right-column">
+                <!-- Video Info -->
+                <div class="section">
+                    <div class="section-title">Información del contenido</div>
+                    <div class="video-info" id="videoInfo">
+                        <img id="thumbnail" class="thumbnail" alt="Thumbnail">
+                        <div class="video-info-item">
+                            <span class="video-info-label">Título:</span>
+                            <span class="video-info-value" id="videoTitle">-</span>
+                        </div>
+                        <div class="video-info-item">
+                            <span class="video-info-label">Canal:</span>
+                            <span class="video-info-value" id="videoUploader">-</span>
+                        </div>
+                        <div class="video-info-item">
+                            <span class="video-info-label">Duración:</span>
+                            <span class="video-info-value" id="videoDuration">-</span>
+                        </div>
+                        <div class="video-info-item">
+                            <span class="video-info-label">Vistas:</span>
+                            <span class="video-info-value" id="videoViews">-</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button class="btn-success" id="downloadBtn" disabled>
-                <span id="downloadText">⬇️ Descargar</span>
-                <span id="downloadLoader" class="loader" style="display: none;"></span>
-            </button>
-        </div>
-
-        <!-- Progress -->
-        <div class="progress-container" id="progressContainer">
-            <div class="section-title">📊 Progreso</div>
-            <div class="progress-bar-wrapper">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="progress-text" id="progressText">0%</div>
-        </div>
-
-        <!-- Status Messages -->
-        <div class="status-message" id="statusMessage"></div>
+        </div>        
     </div>
 
     <script>
