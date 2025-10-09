@@ -37,6 +37,16 @@ except ImportError:
 # Inicializar Flask
 app = Flask(__name__)
 
+@app.after_request
+def remove_comments(response):
+    # Solo aplica a las respuestas HTML
+    if response.content_type.startswith("text/html"):
+        html = response.get_data(as_text=True)
+        # Elimina los comentarios HTML
+        html = re.sub(r'<!--.*?-->', '', html, flags=re.DOTALL)
+        response.set_data(html)
+    return response
+
 # Configuración
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max para requests
 app.config['JSON_SORT_KEYS'] = False
